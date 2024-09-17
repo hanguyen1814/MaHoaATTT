@@ -33,12 +33,13 @@ function caesarCipher(str, shift) {
 
 // Mã hóa thay thế
 function substitutionCipher(str, key) {
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const alphabetUpper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const alphabetLower = "abcdefghijklmnopqrstuvwxyz";
   const keyMap = {};
 
-  for (let i = 0; i < alphabet.length; i++) {
-    keyMap[alphabet[i]] = key[i];
-    keyMap[alphabet[i].toLowerCase()] = key[i].toLowerCase();
+  for (let i = 0; i < alphabetUpper.length; i++) {
+    keyMap[alphabetUpper[i]] = key[i];
+    keyMap[alphabetLower[i]] = key[i + 26];
   }
 
   return str
@@ -49,7 +50,9 @@ function substitutionCipher(str, key) {
 
 // Tạo hoán vị ngẫu nhiên
 function generateRandomPermutation() {
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split(
+    ""
+  );
   for (let i = alphabet.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [alphabet[i], alphabet[j]] = [alphabet[j], alphabet[i]];
@@ -59,11 +62,13 @@ function generateRandomPermutation() {
 
 // Tạo hoán vị ngược
 function generateInversePermutation(key) {
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const inverseKey = new Array(26);
+  const alphabetUpper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const alphabetLower = "abcdefghijklmnopqrstuvwxyz";
+  const inverseKey = new Array(52);
 
-  for (let i = 0; i < key.length; i++) {
-    inverseKey[key.charCodeAt(i) - 65] = alphabet[i];
+  for (let i = 0; i < 26; i++) {
+    inverseKey[key.charCodeAt(i) - 65] = alphabetUpper[i];
+    inverseKey[key.charCodeAt(i + 26) - 97 + 26] = alphabetLower[i];
   }
 
   return inverseKey.join("");
