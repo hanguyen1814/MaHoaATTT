@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caesar Cipher Encoder/Decoder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>Caesar Cipher Encoder/Decoder</h1>
+    <div class="form-group">
+      <label for="inputText">Input Text:</label>
+      <textarea id="inputText" rows="4" placeholder="Enter text here..."></textarea>
+    </div>
+    <div class="form-group">
+      <label for="inputFile">Input File:</label>
+      <input type="file" id="inputFile">
+    </div>
+    <div class="form-group">
+      <label for="encryptionType">Encryption Type:</label>
+      <select id="encryptionType">
+        <option value="caesar">Caesar Cipher</option>
+        <option value="substitution">Substitution Cipher</option>
+        <option value="affine">Affine Cipher</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="key">Key (0-25):</label>
+      <input type="number" id="key" min="0" max="25" placeholder="Enter a number...">
+    </div>
+    <div class="form-group">
+      <label for="substitutionKey">Substitution Key:</label>
+      <input type="text" id="substitutionKey" placeholder="e.g., QWERTYUIOPLKJHGFDSAZXCVBNM">
+    </div>
+    <div class="form-group">
+      <label for="affineA">Affine Key a:</label>
+      <input type="number" id="affineA" min="1" max="25" placeholder="Enter key a...">
+    </div>
+    <div class="form-group">
+      <label for="affineB">Affine Key b:</label>
+      <input type="number" id="affineB" min="0" max="25" placeholder="Enter key b...">
+    </div>
+
+    <div class="form-group">
+      <label for="keepOriginalFile">Keep Original File:</label>
+      <input type="checkbox" id="keepOriginalFile">
+    </div>
+    <div class="form-group button-group">
+      <button id="encodeBtn">Encode</button>
+      <button id="decodeBtn">Decode</button>
+      <button id="autoGenerateKeyBtn">Random Key</button>
+      <button id="exportFileBtn">Export File</button>
+    </div>
+    <div class="form-group">
+      <label for="encodedText">Encoded Text:</label>
+      <textarea id="encodedText" rows="4" readonly></textarea>
+    </div>
+    <div class="form-group">
+      <label for="decodedText">Decoded Text:</label>
+      <textarea id="decodedText" rows="4" readonly></textarea>
+    </div>
+  </div>
+  <script src="main.js"></script>
+</body>
+
+</html>
