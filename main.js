@@ -1,3 +1,39 @@
+// Hàm để hiển thị form-group dựa trên loại mã hóa được chọn
+function updateKeyInputVisibility() {
+  const encryptionType = document.getElementById("encryptionType").value;
+
+  // Ẩn tất cả các form-group trước
+  document.getElementById("caesarKeyGroup").style.display = "none";
+  document.getElementById("substitutionKeyGroup").style.display = "none";
+  document.getElementById("affineKeyGroup").style.display = "none";
+  document.getElementById("vigenereKeyGroup").style.display = "none";
+  document.getElementById("desKeyGroup").style.display = "none";
+  document.getElementById("rsaKeyGroup").style.display = "none";
+
+  // Hiển thị form-group tương ứng
+  if (encryptionType === "caesar") {
+    document.getElementById("caesarKeyGroup").style.display = "block";
+  } else if (encryptionType === "substitution") {
+    document.getElementById("substitutionKeyGroup").style.display = "block";
+  } else if (encryptionType === "affine") {
+    document.getElementById("affineKeyGroup").style.display = "block";
+  } else if (encryptionType === "vigenere") {
+    document.getElementById("vigenereKeyGroup").style.display = "block";
+  } else if (encryptionType === "des") {
+    document.getElementById("desKeyGroup").style.display = "block";
+  } else if (encryptionType === "rsa") {
+    document.getElementById("rsaKeyGroup").style.display = "block";
+  }
+}
+
+// Thêm sự kiện 'change' cho dropdown để cập nhật các form-group
+document
+  .getElementById("encryptionType")
+  .addEventListener("change", updateKeyInputVisibility);
+
+// Gọi hàm này để thiết lập hiển thị ban đầu
+updateKeyInputVisibility();
+
 // Đọc file và hiển thị nội dung vào input text
 document.getElementById("inputFile").addEventListener("change", function () {
   const file = this.files[0];
@@ -96,6 +132,23 @@ document.getElementById("encodeBtn").addEventListener("click", function () {
   ) {
     const encodedText = affineEncrypt(inputText, affineA, affineB);
     document.getElementById("encodedText").value = encodedText;
+  } else if (
+    encryptionType === "vigenere" &&
+    document.getElementById("vigenereKey").value !== undefined
+  ) {
+    const encodedText = vigenereEncrypt(
+      inputText,
+      document.getElementById("vigenereKey").value
+    );
+    document.getElementById("encodedText").value = encodedText;
+  } else if (encryptionType === "des") {
+    const desKey = document.getElementById("desKey").value;
+    const encodedText = desEncrypt(inputText, desKey);
+    document.getElementById("encodedText").value = encodedText;
+  } else if (encryptionType === "rsa") {
+    const rsaPublicKey = document.getElementById("rsaPublicKey").value;
+    const encodedText = rsaEncrypt(inputText, rsaPublicKey);
+    document.getElementById("encodedText").value = encodedText;
   } else {
     alert("Vui lòng nhập khóa hợp lệ!");
   }
@@ -128,6 +181,23 @@ document.getElementById("decodeBtn").addEventListener("click", function () {
     } catch (error) {
       alert("Khóa a không có nghịch đảo. Vui lòng nhập giá trị khác.");
     }
+  } else if (
+    encryptionType === "vigenere" &&
+    document.getElementById("vigenereKey").value !== undefined
+  ) {
+    const decodedText = vigenereDecrypt(
+      inputText,
+      document.getElementById("vigenereKey").value
+    );
+    document.getElementById("decodedText").value = decodedText;
+  } else if (encryptionType === "des") {
+    const desKey = document.getElementById("desKey").value;
+    const decodedText = desDecrypt(inputText, desKey);
+    document.getElementById("decodedText").value = decodedText;
+  } else if (encryptionType === "rsa") {
+    const rsaPrivateKey = document.getElementById("rsaPrivateKey").value;
+    const decodedText = rsaDecrypt(inputText, rsaPrivateKey);
+    document.getElementById("decodedText").value = decodedText;
   } else {
     alert("Vui lòng nhập khóa hợp lệ!");
   }
@@ -199,6 +269,65 @@ function generateRandomAffineKey() {
   return { a: randomA, b: randomB };
 }
 
+// Mã hóa Vigenère
+function vigenereEncrypt(plainText, key) {
+  let encryptedText = "";
+  key = key.toLowerCase();
+  for (let i = 0, j = 0; i < plainText.length; i++) {
+    let currentLetter = plainText[i];
+    if (/[a-zA-Z]/.test(currentLetter)) {
+      // Kiểm tra ký tự là chữ cái
+      let base = currentLetter === currentLetter.toUpperCase() ? 65 : 97;
+      encryptedText += String.fromCharCode(
+        ((currentLetter.charCodeAt(0) -
+          base +
+          (key[j % key.length].charCodeAt(0) - 97)) %
+          26) +
+          base
+      );
+      j++; // Chỉ tăng j khi là chữ cái
+    } else {
+      encryptedText += currentLetter;
+    }
+  }
+  return encryptedText;
+}
+
+// Giải mã Vigenère
+function vigenereDecrypt(cipherText, key) {
+  let decryptedText = "";
+  key = key.toLowerCase();
+  for (let i = 0, j = 0; i < cipherText.length; i++) {
+    let currentLetter = cipherText[i];
+    if (/[a-zA-Z]/.test(currentLetter)) {
+      // Kiểm tra ký tự là chữ cái
+      let base = currentLetter === currentLetter.toUpperCase() ? 65 : 97;
+      decryptedText += String.fromCharCode(
+        ((currentLetter.charCodeAt(0) -
+          base -
+          (key[j % key.length].charCodeAt(0) - 97) +
+          26) %
+          26) +
+          base
+      );
+      j++; // Chỉ tăng j khi là chữ cái
+    } else {
+      decryptedText += currentLetter;
+    }
+  }
+  return decryptedText;
+}
+
+// Tạo một key ngẫu nhiên cho Vigenère
+function generateRandomVigenereKey(length) {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let randomKey = "";
+  for (let i = 0; i < length; i++) {
+    randomKey += alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+  return randomKey;
+}
+
 // Auto-generate key
 document
   .getElementById("autoGenerateKeyBtn")
@@ -215,8 +344,60 @@ document
       const affineKey = generateRandomAffineKey();
       document.getElementById("affineA").value = affineKey.a;
       document.getElementById("affineB").value = affineKey.b;
+    } else if (options === "vigenere") {
+      const randomKey = generateRandomVigenereKey(6); // Chiều dài 6 ký tự, có thể tùy chỉnh
+      document.getElementById("vigenereKey").value = randomKey;
+    }
+    if (options === "des") {
+      const desKey = generateDesKey();
+      document.getElementById("desKey").value = desKey;
+    } else if (options === "rsa") {
+      const { publicKey, privateKey } = generateRsaKeyPair();
+      document.getElementById("rsaPublicKey").value = publicKey;
+      document.getElementById("rsaPrivateKey").value = privateKey;
     }
   });
+
+// Mã hóa DES
+function desEncrypt(plainText, key) {
+  return CryptoJS.DES.encrypt(plainText, key).toString();
+}
+
+// Giải mã DES
+function desDecrypt(cipherText, key) {
+  return CryptoJS.DES.decrypt(cipherText, key).toString(CryptoJS.enc.Utf8);
+}
+
+// Mã hóa RSA
+function rsaEncrypt(plainText, publicKey) {
+  const encrypt = new JSEncrypt();
+  encrypt.setPublicKey(publicKey);
+  return encrypt.encrypt(plainText);
+}
+
+// Giải mã RSA
+function rsaDecrypt(cipherText, privateKey) {
+  const decrypt = new JSEncrypt();
+  decrypt.setPrivateKey(privateKey);
+  return decrypt.decrypt(cipherText);
+}
+
+function generateDesKey() {
+  const charset =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let desKey = "";
+  for (let i = 0; i < 8; i++) {
+    const randomIndex = Math.floor(Math.random() * charset.length);
+    desKey += charset[randomIndex];
+  }
+  return desKey;
+}
+function generateRsaKeyPair() {
+  const encrypt = new JSEncrypt({ default_key_size: 1024 }); // Kích thước khóa mặc định là 1024 bit
+  const publicKey = encrypt.getPublicKey();
+  const privateKey = encrypt.getPrivateKey();
+  return { publicKey, privateKey };
+}
 
 // Export file
 document.getElementById("exportFileBtn").addEventListener("click", function () {

@@ -94,3 +94,13 @@ input[type="file"] {
           padding: 15px;
      }
 }
+
+/* Ẩn toàn bộ form-group mặc định */
+#caesarKeyGroup,
+#substitutionKeyGroup,
+#affineKeyGroup,
+#vigenereKeyGroup,
+#desKeyGroup,
+#rsaKeyGroup {
+     display: none;
+}
